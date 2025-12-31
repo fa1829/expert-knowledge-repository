@@ -13,20 +13,26 @@ from models import AccessControl, KnowledgeItem
 def allowed_file(filename):
     """Check if file extension is allowed"""
     allowed_extensions = current_app.config.get('ALLOWED_EXTENSIONS', '').split(',')
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    if '.' not in filename:
+        return False
+    ext = filename.rsplit('.', 1)[1].lower()
+    return ext in allowed_extensions
 
 
 def generate_unique_filename(original_filename):
     """Generate a unique filename while preserving extension"""
-    ext = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else ''
+    if '.' not in original_filename:
+        return f"{uuid.uuid4().hex}"
+    ext = original_filename.rsplit('.', 1)[1].lower()
     unique_name = f"{uuid.uuid4().hex}.{ext}"
     return unique_name
 
 
 def get_file_type(filename):
     """Determine file type based on extension"""
-    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    if '.' not in filename:
+        return 'other'
+    ext = filename.rsplit('.', 1)[1].lower()
     
     image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']
     video_extensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm']

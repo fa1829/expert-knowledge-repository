@@ -6,6 +6,7 @@ from whoosh.index import create_in, open_dir, exists_in
 from whoosh.fields import Schema, TEXT, ID, KEYWORD, DATETIME
 from whoosh.qparser import MultifieldParser
 from whoosh.analysis import StemmingAnalyzer
+from whoosh.writing import CLEAR
 
 
 class SearchIndex:
@@ -79,7 +80,13 @@ class SearchIndex:
     
     def reindex_all(self, knowledge_items):
         """Rebuild the entire search index"""
+        # Clear existing index by creating a new writer
         writer = self.index.writer()
+        
+        # Clear all documents
+        writer.mergetype = CLEAR
+        
+        # Add all knowledge items
         for item in knowledge_items:
             writer.add_document(
                 id=str(item.id),

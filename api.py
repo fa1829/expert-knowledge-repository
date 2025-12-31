@@ -172,16 +172,22 @@ def delete_knowledge_item(item_id):
     """Delete a knowledge item"""
     item = KnowledgeItem.query.get_or_404(item_id)
     
-    # Delete associated files
+    # Delete associated files with error handling
     for doc in item.documents:
-        if os.path.exists(doc.file_path):
-            os.remove(doc.file_path)
+        try:
+            if os.path.exists(doc.file_path):
+                os.remove(doc.file_path)
+        except OSError as e:
+            current_app.logger.warning(f"Failed to delete document file {doc.file_path}: {e}")
     
     for media in item.media_files:
-        if os.path.exists(media.file_path):
-            os.remove(media.file_path)
-        if media.thumbnail_path and os.path.exists(media.thumbnail_path):
-            os.remove(media.thumbnail_path)
+        try:
+            if os.path.exists(media.file_path):
+                os.remove(media.file_path)
+            if media.thumbnail_path and os.path.exists(media.thumbnail_path):
+                os.remove(media.thumbnail_path)
+        except OSError as e:
+            current_app.logger.warning(f"Failed to delete media file {media.file_path}: {e}")
     
     # Remove from search index
     search_index = SearchIndex(current_app.config['SEARCH_INDEX_PATH'])

@@ -28,5 +28,5 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 ENV PYTHONUNBUFFERED=1
 
-# Run database migrations and start the application
-CMD ["sh", "-c", "flask db upgrade && python app.py"]
+# Initialize database and run the application
+CMD ["sh", "-c", "python -c 'from app import create_app; from models import db; app = create_app(); app.app_context().push(); db.create_all()' && python app.py"]
