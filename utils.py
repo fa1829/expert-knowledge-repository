@@ -15,7 +15,10 @@ def allowed_file(filename):
     allowed_extensions = current_app.config.get('ALLOWED_EXTENSIONS', '').split(',')
     if '.' not in filename:
         return False
-    ext = filename.rsplit('.', 1)[1].lower()
+    parts = filename.rsplit('.', 1)
+    if len(parts) != 2 or not parts[1]:
+        return False
+    ext = parts[1].lower()
     return ext in allowed_extensions
 
 
@@ -23,7 +26,10 @@ def generate_unique_filename(original_filename):
     """Generate a unique filename while preserving extension"""
     if '.' not in original_filename:
         return f"{uuid.uuid4().hex}"
-    ext = original_filename.rsplit('.', 1)[1].lower()
+    parts = original_filename.rsplit('.', 1)
+    if len(parts) != 2 or not parts[1]:
+        return f"{uuid.uuid4().hex}"
+    ext = parts[1].lower()
     unique_name = f"{uuid.uuid4().hex}.{ext}"
     return unique_name
 
@@ -32,7 +38,10 @@ def get_file_type(filename):
     """Determine file type based on extension"""
     if '.' not in filename:
         return 'other'
-    ext = filename.rsplit('.', 1)[1].lower()
+    parts = filename.rsplit('.', 1)
+    if len(parts) != 2 or not parts[1]:
+        return 'other'
+    ext = parts[1].lower()
     
     image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']
     video_extensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm']
