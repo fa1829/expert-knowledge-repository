@@ -1,0 +1,12 @@
+services:
+  ekr:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - EKR_HOST=0.0.0.0
+      - EKR_PORT=5000
+      - EKR_DEBUG=0
+      # - EKR_ADMIN_TOKEN=change-this
+    volumes:
+      - ./_data:/data
